@@ -112,3 +112,110 @@
 - **기능을 구현하기 전에 javascript-subway-precourse/docs/README.md 파일에 구현할 기능 목록**을 정리해 추가한다.
 - **git의 commit 단위는 앞 단계에서 README.md 파일에 정리한 기능 목록 단위로 추가**한다.
 - [프리코스 과제 제출](https://github.com/woowacourse/woowacourse-docs/tree/master/precourse) 문서 절차를 따라 미션을 제출한다.
+
+
+
+기능정리
+
+1. 역
+- 화면
+ - 역 form
+  - 역 이름 label
+  - 역 이름 input 
+  - 역 추가 button
+ - 지하철 역 목록 title
+ - 지하철 역 목록 table
+  - tr 
+   - th 역이름
+   - th 설정
+  - tr data-set index?
+   - td ${stationName}
+   - td button 삭제
+
+
+ - 추가
+  - 중복하면 안됨 (찾기함수로 체크 후 추가)
+  - 글자는 2글자 이상
+
+- 삭제
+ - 노선에 등록된 역 삭제 불가(노선 찾기로 체크 후 삭제)
+ - advance) 돔 하나만 삭제하기 성능 최적화
+
+- 공통함수 찾기
+ - 이름 혹은 index로 찾기
+
+- 리스트
+ - table에 이름과 삭제버튼을 생성
+ - 삭제버튼마다 클릭 이벤트리스너 추가
+  - advance로 이벤트 위임을 이용한 최적화 고려
+
+2. 노선
+ - 화면
+  - 노선 추가 form
+   - 노선 이름 label
+   - 노선 이름 input
+   // select tag 공부 필요!
+   - 상행종점 select -> stations 이용
+   - 하행종점 select -> stations 이용
+   - 노선추가 button type=submit 
+  - 지하철 노선 목록 title h2?
+  - 지하철 노선 목록 table
+   - tr
+    - th 노선 이름
+    - th 상행 종점역
+    - th 하행 종점역
+    - th 설정 
+     - button 삭제 addEventListener click
+
+ - 기능
+  - 등록(추가)
+   form validation check(required) 
+   - 중복 x
+   - 이름이 빈칸이면 안된다.
+   - 상행과 하행이 겹치면 안된다.
+    - advance) 2호선처럼 순환노선이 가능하다면?
+  
+  - 삭제
+   - 존재하지 않는 노선을 지울 수 없다.
+
+  - 목록
+   - Object.value(lines).map(line=>calback)으로 작성하자.
+  
+3. 구간
+ - 화면
+  - h2 구간을 수정할 노선을 선택해주세요
+  - buttons ${라인 이름}
+  
+  action( 버튼 클릭 후)
+  - h2 ${선택된 라인 이름} 관리
+  - form 구간등록
+   - title 구간등록
+   - select 역 list
+   - input number
+   - button 등록
+  
+  목록
+  - table 
+   - tr 
+    - th 순서
+    - th 이름
+    - th 설정
+- 기능
+ - 수정할 노선 선택
+  - 노선리스트를 버튼으로 랜더
+   - advance) 이벤트 위임으로 이베트 부하 감소시키기
+ - 등록
+  - 역 선택시 기존 노선에 존재하는지 판단
+  - 순서 number valid, range valid
+ - 제거
+  - 이름 or index로 삭제
+  - 제대로 된 삭제인가..?
+
+추가적인 고려사항
+화면 전환은 어떻게 할 것 인가?
+ - 각 컴포넌트마다 render함수를 만들어, 관리한다?
+ - 좀더 고려해봐야한다.
+- data-set공부
+- select공부
+- table 공부
+- 배민 table 공부
