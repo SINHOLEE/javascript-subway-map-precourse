@@ -1,5 +1,5 @@
 import StationModel from "./Station.js";
-import { genUUID } from "./utils";
+import { genUUID } from "./utils.js";
 
 describe("station Model", () => {
 	test("잘 생성되었나?", () => {
