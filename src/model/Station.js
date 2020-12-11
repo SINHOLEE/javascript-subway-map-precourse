@@ -1,11 +1,12 @@
+import { setLocalStorage, getLocalStorageByKey } from "./utils.js";
+
 export default class StationModel {
-	stations = null;
 	constructor(stations = []) {
-		localStorage.setItem("stations", stations);
+		setLocalStorage("stations", stations);
 		this.stations = stations;
 	}
 	getStations() {
-		return localStorage.getItem("stations");
+		return getLocalStorageByKey("stations");
 	}
 	/**
 	 * station = {
@@ -16,14 +17,14 @@ export default class StationModel {
 	addStation(station) {
 		const stations = this.getStations();
 		const newStations = [...stations, { ...station }];
-		localStorage.setItem("stations", newStations);
+		setLocalStorage("stations", newStations);
 	}
 	/**
 	 * @param id uuid
 	 * **/
 	removeStationById(id) {
 		const stations = this.getStations();
-		const newStations = stations.fillter((station) => station.id !== id);
-		localStorage.setItem("stations", newStations);
+		const newStations = stations.filter((station) => station.id !== id);
+		setLocalStorage("stations", newStations);
 	}
 }
