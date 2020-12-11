@@ -1,30 +1,28 @@
-function render() {
-	const $app = document.getElementById("app");
-	const buttonContainer = document.createElement("div");
-	buttonContainer.classList.add("btn-container");
+import Controllor from "./controllor/Controllor.js";
+import StationModel from "./model/Station.js";
+import BaseView from "./view/BaseView.js";
+import StationView from "./view/StationView.js";
 
-	const buttons = [
-		{ name: "역 관리", id: "station-manager" },
-		{ name: "노선 관리", id: "line-manager" },
-		{ name: "구간 관리", id: "section-manager" },
-		{ name: "지하철 노선도 출력", id: "map-print-manager" },
-	];
+class App {
+	$target = null;
+	constructor() {
+		this.$target = document.getElementById("app");
 
-	const buttonEls = buttons
-		.map(
-			(button, index) =>
-				`<button type='button' data-index=${index} id='${button.id}-button'>${
-					index + 1
-				}. ${button.name}</buttopn>`
-		)
-		.join("");
+		new Controllor(this.createModels(), this.createViews());
+	}
 
-	buttonContainer.innerHTML = buttonEls;
-	buttonContainer.addEventListener("click", (e) => {
-		console.log(e.target.dataset);
-	});
+	createModels() {
+		const stationModel = new StationModel();
+		const models = { stationModel };
+		return models;
+	}
 
-	app.appendChild(buttonContainer);
+	createViews() {
+		const baseView = new BaseView(this.$target);
+		const stationView = new StationView(this.$target);
+		const views = { baseView, stationView };
+		return views;
+	}
 }
 
-render();
+export default new App();
