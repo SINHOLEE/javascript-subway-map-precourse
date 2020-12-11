@@ -283,4 +283,7 @@
 - data-set공부
 - select공부
 - table 공부
-- 배민 table 공부 -> 공통부분 꺼내서 컴포넌트화 가능
+- 배민 table 공부
+
+MVC 패턴으로 구현할 예정
+각 model은 jest를 거쳐 테스트 함
