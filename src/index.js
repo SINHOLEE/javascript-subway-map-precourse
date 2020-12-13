@@ -19,7 +19,7 @@ class App {
 
 	createViews() {
 		const baseView = new BaseView(this.$target);
-		const stationView = new StationView(this.$target);
+		const stationView = new StationView();
 		const views = { baseView, stationView };
 		return views;
 	}

@@ -27,6 +27,10 @@ export default class BaseView {
 
 		this.$buttonContainer.innerHTML = buttonEls;
 		this.$app.appendChild($buttonContainer);
+
+		const mainContainer = document.createElement("div");
+		mainContainer.classList.add("container");
+		this.$app.appendChild(mainContainer);
 	}
 
 	bindOnClickButton(onClickButton) {

@@ -1,12 +1,19 @@
 export default class StationView {
-	$app = null;
-	constructor($app) {
-		this.$app = $app;
-		this.createForm();
-	}
+	constructor() {}
+	// 여기서 $container를 선언해서 사용하고 싶은데...
+	// 생성시점에는 baseView가 render하기 전이라서
+	// 매 함수마다 const $container = document.querySelector(".container");
+	// 위와같은 선언을 해야한다... 맘에 안든다 어떻게 해야할까?
 
-	createForm() {
+	_clear() {
+		const $container = document.querySelector(".container");
+		$container.innerHTML = "";
+	}
+	render() {
+		const $container = document.querySelector(".container");
+		this._clear();
 		const form = document.createElement("form");
+		form.id = "station-name-form";
 
 		const label = document.createElement("label");
 		label.htmlFor = "station-name-input";
@@ -20,11 +27,16 @@ export default class StationView {
 		const addButton = document.createElement("button");
 		addButton.id = "station-add-button";
 		addButton.innerText = "역 추가";
+		addButton.type = "submit";
 
 		form.appendChild(label);
 		form.appendChild(input);
 		form.appendChild(addButton);
 
-		this.$app.appendChild(form);
+		$container.appendChild(form);
+	}
+	bindOnClickSubmit(onClickSublit) {
+		const form = document.getElementById("station-name-form");
+		form.addEventListener("submit", onClickSublit);
 	}
 }
