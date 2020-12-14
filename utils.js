@@ -1,3 +1,4 @@
+// models
 export function setLocalStorage(key, value) {
 	localStorage.setItem(key, JSON.stringify(value));
 }
@@ -39,4 +40,10 @@ export function genUUID() {
 		lut[(d3 >> 16) & 0xff] +
 		lut[(d3 >> 24) & 0xff]
 	);
+}
+
+// controllor
+export function parseFormData(form) {
+	const res = Array.from(form.querySelectorAll("input")).reduce((acc, input) => ({...acc, [input.id]: input.value}), {});
+	return res;
 }
