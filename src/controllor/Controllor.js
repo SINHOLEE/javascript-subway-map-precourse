@@ -1,4 +1,4 @@
-import { parseFormData } from "./utils";
+import {genUUID, parseFormData} from "../../utils.js";
 
 export default class Controllor {
 	constructor(models, views) {
@@ -8,24 +8,26 @@ export default class Controllor {
 		this.$that = this;
 	}
 	init() {
-		const { baseView } = this.views;
+		const {baseView} = this.views;
 		baseView.render();
 		baseView.bindOnClickButton(this.onClickButton.bind(this));
 	}
 	onClickSubmit(e) {
-		console.log(this);
+		// console.log(this);
 		e.preventDefault();
+		// console.log(e.target.id); id로 분기잡아서 로직을 나눠볼까..?
+
 		const res = parseFormData(e.target);
-		console.log({ res });
-		console.log();
-		console.log("123");
-		console.log("1234");
+
+		this.models.stationModel.addStation({name: res["station-name-input"], id: genUUID()});
+		console.log(this.models.stationModel.getStations());
+		this.views.stationView.render(this.models.stationModel.getStations());
 	}
 
 	onClickButton(e) {
 		console.log(e.target.dataset);
 		if (e.target.dataset.index === "0") {
-			this.views.stationView.render();
+			this.views.stationView.render(this.models.stationModel.getStations());
 			this.views.stationView.bindOnClickSubmit(this.onClickSubmit.bind(this));
 		}
 	}

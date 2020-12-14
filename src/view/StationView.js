@@ -9,7 +9,7 @@ export default class StationView {
 		const $container = document.querySelector(".container");
 		$container.innerHTML = "";
 	}
-	render() {
+	render(stations) {
 		const $container = document.querySelector(".container");
 		this._clear();
 		const form = document.createElement("form");
@@ -34,6 +34,27 @@ export default class StationView {
 		form.appendChild(addButton);
 
 		$container.appendChild(form);
+
+		const tableContainer = document.createElement("div");
+
+		const title = document.createElement("h1");
+		title.innerText = "지하철 역 목록";
+
+		const table = document.createElement("table");
+		tableContainer.appendChild(title);
+		tableContainer.appendChild(table);
+
+		$container.appendChild(tableContainer);
+		console.log(stations);
+		let tableHTML = "";
+		const header = "<thead><tr><th>역 이름</th><th>설정</th></tr></thead>";
+		const body = stations.map((station) => {
+			return `<tr><td>${station.name}</td><td><button>삭제</button></td></tr>`;
+		});
+		tableHTML += header;
+		console.log(body.join(""));
+		tableHTML += `<tbody>` + body.join("") + `</tbody>`;
+		table.innerHTML = tableHTML;
 	}
 	bindOnClickSubmit(onClickSublit) {
 		const form = document.getElementById("station-name-form");
