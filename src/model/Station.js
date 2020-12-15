@@ -2,11 +2,11 @@ import {setLocalStorage, getLocalStorageByKey} from "../../utils.js";
 
 export default class StationModel {
 	constructor() {
-		const stations = getLocalStorageByKey("stations");
+		const stations = getLocalStorageByKey("stations") | [];
 		console.log(stations);
-		if (!stations) {
-			setLocalStorage("stations", []);
-		}
+		// if (!stations) {
+		setLocalStorage("stations");
+		// }
 		this.stations = stations;
 	}
 	getStations() {
