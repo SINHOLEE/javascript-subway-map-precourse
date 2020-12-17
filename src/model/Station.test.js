@@ -17,6 +17,7 @@ describe("station Model", () => {
 		stationModel.addStation(newStation);
 		expect(stationModel.getStations()).toStrictEqual([newStation]);
 	});
+
 	it("잘 추가 되나2", () => {
 		const stationModel = new StationModel();
 		const id = genUUID();
