@@ -45,8 +45,8 @@ export function genUUID() {
 // controllor
 export function parseFormData(form) {
 	const res = Array.from(form.querySelectorAll("input")).reduce(
-		(acc, input) => ({...acc, [input.id]: input.value}),
-		{},
+		(acc, input) => ({ ...acc, [input.name]: input.value }),
+		{}
 	);
 	return res;
 }

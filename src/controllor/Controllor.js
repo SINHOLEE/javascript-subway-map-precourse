@@ -12,27 +12,36 @@ export default class Controllor {
 		baseView.render();
 		baseView.bindOnClickButton(this.onClickButton.bind(this));
 	}
-	onClickSubmit(e) {
+	// router 역할?
+	onStationSubmit(e) {
 		// console.log(this);
 		e.preventDefault();
-		// console.log(e.target.id); id로 분기잡아서 로직을 나눠볼까..?
+		function callback() {
+			stationView.showTable(stationModel.getStations());
+		}
 
-		const res = parseFormData(e.target);
-
-		this.models.stationModel.addStation({
-			name: res["station-name-input"],
+		const { name } = parseFormData(e.target);
+		const { stationModel } = this.models;
+		const { stationView } = this.views;
+		const newStation = {
+			name,
 			id: genUUID(),
-		});
-		console.log(this.models.stationModel.getStations());
-		this.views.stationView.showTable(this.models.stationModel.getStations());
+		};
+		stationModel.addStation(newStation, callback.bind(this));
 	}
 
 	onClickButton(e) {
-		console.log(e.target.dataset);
+		console.log(e.target);
+		if (e.target.tagName != "button") {
+			return;
+		}
+
 		if (e.target.dataset.index === "0") {
+			const { stationView } = this.views;
 			const stations = this.models.stationModel.getStations();
-			this.views.stationView.render(stations);
-			this.views.stationView.bindOnClickSubmit(this.onClickSubmit.bind(this));
+
+			stationView.render(stations);
+			stationView.bindOnClickSubmit(this.onStationSubmit.bind(this));
 		}
 	}
 }

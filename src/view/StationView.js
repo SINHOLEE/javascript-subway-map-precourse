@@ -31,7 +31,7 @@ export default class StationView {
 
 		const $input = document.createElement("input");
 		$input.id = "station-name-input";
-		$input.name = "station-name-input";
+		$input.name = "name";
 		$input.placeholder = "역 이름을 입력해 주세요.";
 
 		$form.appendChild($label);
@@ -57,6 +57,7 @@ export default class StationView {
 	}
 	showTable(stations) {
 		// 아.. 이부분도 맘에 안듬... 흠..
+		console.log("in ShowTable ", this);
 		this._clearTableContainer();
 		const tableContainer = document.createElement("div");
 		tableContainer.id = "table-container";
