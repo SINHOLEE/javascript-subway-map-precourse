@@ -5,6 +5,7 @@ export default class BaseView {
 	constructor($app) {
 		this.$app = $app;
 		this.$buttonContainer = null;
+		this.$mainContainer = null;
 	}
 	_createButtons() {
 		const $buttonContainer = document.createElement("div");
@@ -23,12 +24,21 @@ export default class BaseView {
 	}
 	_createMainContainer() {
 		const mainContainer = document.createElement("div");
-		mainContainer.classList.add("container");
-		this.$app.appendChild(mainContainer);
+		this.$mainContainer = mainContainer
+		this.$mainContainer.classList.add("container");
+		
+		const tabs = ['stations-tab', 'lines-tab', 'sections-tab', 'map-tap']
+		const tabEls = tabs.map(tab=>`<div class='tab' style='display:none' id='${tab}'></div>`).join("")
+
+		this.$mainContainer.innerHTML = tabEls
+		this.$app.appendChild(this.$mainContainer);
 	}
-	render() {
+	render(callback) {
 		this._createButtons();
 		this._createMainContainer();
+		if (callback){
+			callback(this.$mainContainer)
+		}
 	}
 
 	bindOnClickButton(onClickButton) {

@@ -4,12 +4,17 @@ export default class Controllor {
 	constructor(models, views) {
 		this.models = models;
 		this.views = views;
+		this.$mainContainer = null; 
 		this.init();
-		this.$that = this;
+		// this.$mainContainer = null; // 와.... init 밑에있다고 개꼬이네...
+		// 소름 
+	}
+	setMainContainer($mainContainer){
+		this.$mainContainer = $mainContainer
 	}
 	init() {
 		const { baseView } = this.views;
-		baseView.render();
+		baseView.render(this.setMainContainer.bind(this));
 		baseView.bindOnClickButton(this.onClickButton.bind(this));
 	}
 	// router 역할?
@@ -31,11 +36,14 @@ export default class Controllor {
 	}
 
 	onClickButton(e) {
-		console.log(e.target);
-		if (e.target.tagName != "button") {
+		const index = e.target.dataset.index
+		const tagName = e.target.tagName.toLowerCase()
+		if (tagName != "button") {
 			return;
 		}
-
+		const tabs = this.$mainContainer.querySelectorAll('.tab');
+		const targetTabEl = tabs[index]
+		// console.log(tabs[index])
 		if (e.target.dataset.index === "0") {
 			const { stationView } = this.views;
 			const stations = this.models.stationModel.getStations();
