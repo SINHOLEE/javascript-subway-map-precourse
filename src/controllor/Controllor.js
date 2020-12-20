@@ -73,23 +73,38 @@ export default class Controllor {
     stationModel.addStation(newStation, callback.bind(this));
   }
 
+  _renderStationsTab() {
+    const { stationView } = this.views;
+    const stations = this.models.stationModel.getStations();
+
+    stationView.showStationsTab();
+    stationView.render(stations);
+    // 이 바인드가 비동기 적인가?
+    stationView.bindOnClickSubmit(this.onStationSubmit.bind(this));
+    stationView.bindOnClickRemove(this.onStationRemove.bind(this));
+  }
+
+  _renderLinesTab() {}
   onClickButton(e) {
     const index = e.target.dataset.index;
     const tagName = e.target.tagName.toLowerCase();
     if (tagName != "button") {
       return;
     }
-    const tabs = this.$mainContainer.querySelectorAll(".tab");
-    const targetTabEl = tabs[index];
+    const { baseView } = this.views;
+    baseView.hideAllTabs();
     // console.log(tabs[index])
-    if (e.target.dataset.index === "0") {
-      const { stationView } = this.views;
-      const stations = this.models.stationModel.getStations();
-
-      stationView.render(stations);
-      // 이 바인드가 비동기 적인가?
-      stationView.bindOnClickSubmit(this.onStationSubmit.bind(this));
-      stationView.bindOnClickRemove(this.onStationRemove.bind(this));
+    if (index === "0") {
+      this._renderStationsTab();
+    }
+    if (index === "1") {
+      this._renderLinesTab();
+    }
+    if (index === "2") {
+      this._renderSectionsTab();
+    }
+    if (index === "3") {
+      this._renderMapTab();
     }
   }
 }

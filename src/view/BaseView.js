@@ -40,6 +40,14 @@ export default class BaseView {
 
     this.$app.appendChild(this.$mainContainer);
   }
+  hideAllTabs() {
+    if (this.$tabEls) {
+      for (let idx = 0; idx < this.$tabEls.length; idx++) {
+        this.$tabEls[idx].style.display = "none";
+      }
+      console.log(this.$tabEls);
+    }
+  }
   render(callback) {
     this._createButtons();
     this._createMainContainer();

@@ -96,7 +96,7 @@ export default class StationView {
     this._createTBody(stations);
     this.$stationsTab.append(this.$table);
   }
-  _showStationsTab() {
+  showStationsTab() {
     this.$stationsTab.style.display = "block";
   }
   render(stations) {
@@ -104,7 +104,6 @@ export default class StationView {
     this._createForm();
     this._createTitle();
     this.showTable(stations);
-    this._showStationsTab();
   }
   // 사실 컨트롤러 단에서, tr객체를  넘겨줄 수도 있었다.
   // 그렇게 하지 않은 이유는 컨트롤러는 데이터만 다루어야 하기 때문이라고 생각해서 이다.
