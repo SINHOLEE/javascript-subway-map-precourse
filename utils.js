@@ -50,3 +50,9 @@ export function parseFormData(form) {
   );
   return res;
 }
+
+export function stringToDomElement(htmlString) {
+  const template = document.createElement("template");
+  template.innerHTML = htmlString;
+  return template.content.firstChild;
+}
