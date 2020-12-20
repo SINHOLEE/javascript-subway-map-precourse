@@ -1,13 +1,10 @@
-import { stringToDomElement } from "../../utils.js";
-
 export default class StationView {
   constructor() {
     // lazy load??
-    this.$container = null;
     this.$stationsTab = null;
     this.$form = null;
     this.$input = null;
-    this.$table = document.createElement("table");
+    this.$table = null;
     this.$tbody = null;
   }
   setStationsTab($stationsTab) {
@@ -20,18 +17,12 @@ export default class StationView {
   }
   _clearTable() {
     if (this.$table) {
-      this.$table.innerHTML = "";
+      this.$table.remove();
     }
   }
   _clearStationsTab() {
     if (this.$stationsTab) {
       this.$stationsTab.innerHTML = "";
-    }
-  }
-  _clearTableContainer() {
-    const $tableContainer = document.getElementById("table-container");
-    if ($tableContainer) {
-      $tableContainer.remove();
     }
   }
   _createInput($form) {
@@ -59,7 +50,7 @@ export default class StationView {
   }
   _createForm() {
     const $form = document.createElement("form");
-    $form.id = "station-name-form";
+    $form.id = "station-form";
     this.$form = $form;
 
     this._createInput($form);
@@ -73,6 +64,9 @@ export default class StationView {
     this.$stationsTab.append(title);
   }
 
+  _createTable() {
+    this.$table = document.createElement("table");
+  }
   _createTHead() {
     let tableHTML = "";
     const header = "<thead><tr><th>역 이름</th><th>설정</th></tr></thead>";
@@ -80,18 +74,20 @@ export default class StationView {
     this.$table.innerHTML = tableHTML;
   }
   _createTBody(stations) {
-    const body = stations.map((station) => {
-      return `<tr data-station-id='${station.id}'><td>${station.name}</td><td><button>삭제</button></td></tr>`;
-    });
-    const HTMLTbodyString = `<tbody>` + body.join("") + `</tbody>`.trim();
+    const tbody = document.createElement("tbody");
+    tbody.innerHTML = stations
+      .map(
+        (station) =>
+          `<tr data-station-id='${station.id}'><td>${station.name}</td><td><button>삭제</button></td></tr>`
+      )
+      .join("");
 
-    // text to dom trick
-    this.$tbody = stringToDomElement(HTMLTbodyString);
-
+    this.$tbody = tbody;
     this.$table.append(this.$tbody);
   }
   showTable(stations) {
     this._clearTable();
+    this._createTable();
     this._createTHead();
     this._createTBody(stations);
     this.$stationsTab.append(this.$table);

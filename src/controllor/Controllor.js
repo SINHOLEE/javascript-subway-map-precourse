@@ -20,7 +20,9 @@ export default class Controllor {
     stationView.setStationsTab($stationsTab);
   }
   setLinesTab($linesTab) {
+    const { lineView } = this.views;
     this.$linesTab = $linesTab;
+    lineView.setLinesTab($linesTab);
   }
   setSectionsTab($sectionsTab) {
     this.$sectionsTab = $sectionsTab;
@@ -84,7 +86,12 @@ export default class Controllor {
     stationView.bindOnClickRemove(this.onStationRemove.bind(this));
   }
 
-  _renderLinesTab() {}
+  _renderLinesTab() {
+    const { lineView } = this.views;
+    const stations = this.models.stationModel.getStations();
+    lineView.showTab();
+    lineView.render(stations);
+  }
   onClickButton(e) {
     const index = e.target.dataset.index;
     const tagName = e.target.tagName.toLowerCase();
@@ -93,7 +100,6 @@ export default class Controllor {
     }
     const { baseView } = this.views;
     baseView.hideAllTabs();
-    // console.log(tabs[index])
     if (index === "0") {
       this._renderStationsTab();
     }
