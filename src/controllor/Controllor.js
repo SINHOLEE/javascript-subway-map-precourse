@@ -1,5 +1,4 @@
 import { genUUID, parseFormData } from "../../utils.js";
-import StationView from "../view/StationView.js";
 
 export default class Controllor {
   constructor(models, views) {
@@ -44,12 +43,24 @@ export default class Controllor {
     });
     baseView.bindOnClickButton(this.onClickButton.bind(this));
   }
-  // router 역할?
+  onStationRemove(e) {
+    if (e.target.tagName !== "BUTTON") {
+      return;
+    }
+    // 맘에 안드는 파트 하지만 일단 당장해야하니까 넘어간다...
+    const selectedStationId = e.target.parentNode.parentNode.dataset.stationId;
+    const { stationModel } = this.models;
+    const { stationView } = this.views;
+
+    stationModel.removeStationById(selectedStationId, () => {
+      stationView.removeTrByStationId.bind(stationView)(selectedStationId);
+    });
+  }
   onStationSubmit(e) {
-    // console.log(this);
     e.preventDefault();
     function callback() {
       stationView.showTable(stationModel.getStations());
+      stationView.clearInputValue();
     }
 
     const { name } = parseFormData(e.target);
@@ -65,7 +76,6 @@ export default class Controllor {
   onClickButton(e) {
     const index = e.target.dataset.index;
     const tagName = e.target.tagName.toLowerCase();
-    console.log(this.$stationsTab);
     if (tagName != "button") {
       return;
     }
@@ -77,7 +87,9 @@ export default class Controllor {
       const stations = this.models.stationModel.getStations();
 
       stationView.render(stations);
+      // 이 바인드가 비동기 적인가?
       stationView.bindOnClickSubmit(this.onStationSubmit.bind(this));
+      stationView.bindOnClickRemove(this.onStationRemove.bind(this));
     }
   }
 }
