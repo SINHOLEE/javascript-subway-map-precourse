@@ -5,43 +5,20 @@ export default class Controllor {
 		this.models = models;
 		this.views = views;
 		this.$mainContainer = null;
-		this.$stationsTab = null;
-		this.$linesTab = null;
-		this.$sectionsTab = null;
-		this.$mapTab = null;
-
 		this.init();
 		// this.$mainContainer = null; // 와.... init 밑에있다고 개꼬이네...
 		// 소름
-	}
-	setStationsTab($stationsTab) {
-		const { stationView } = this.views;
-		this.$stationsTab = $stationsTab;
-		stationView.setStationsTab($stationsTab);
-	}
-	setLinesTab($linesTab) {
-		const { lineView } = this.views;
-		this.$linesTab = $linesTab;
-		lineView.setLinesTab($linesTab);
-	}
-	setSectionsTab($sectionsTab) {
-		this.$sectionsTab = $sectionsTab;
-	}
-	setMapTab($mapTab) {
-		this.$mapTab = $mapTab;
 	}
 	setMainContainer($mainContainer) {
 		this.$mainContainer = $mainContainer;
 	}
 	init() {
-		const { baseView } = this.views;
-		baseView.render(($mainContainer, $tabEls) => {
-			this.setMainContainer.bind(this)($mainContainer);
+		const { baseView, stationView, lineView } = this.views;
+		baseView.render(($tabEls) => {
+			// this.setMainContainer.bind(this)($mainContainer);
 
-			this.setStationsTab.bind(this)($tabEls[0]);
-			this.setLinesTab.bind(this)($tabEls[1]);
-			this.setSectionsTab.bind(this)($tabEls[2]);
-			this.setMapTab.bind(this)($tabEls[3]);
+			stationView.setStationsTab($tabEls[0]);
+			lineView.setLinesTab($tabEls[1]);
 		});
 		baseView.bindOnClickButton(this.onClickButton.bind(this));
 	}

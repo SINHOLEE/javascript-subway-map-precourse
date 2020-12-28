@@ -1,64 +1,71 @@
 import { CONSTANTS } from "../../config.js";
 
 export default class BaseView {
-  $app = null;
-  constructor($app) {
-    this.$app = $app;
-    this.$buttonContainer = null;
-    this.$mainContainer = null;
-    this.$tabEls = null;
-  }
-  _createButtons() {
-    const $buttonContainer = document.createElement("div");
-    this.$buttonContainer = $buttonContainer;
-    this.$buttonContainer.classList.add("btn-container");
+	$app = null;
+	constructor($app) {
+		this.$app = $app;
+		this.$buttonContainer = null;
+		this.$tabContainer = null;
+	}
+	_createButtons() {
+		const $buttonContainer = document.createElement("div");
+		this.$buttonContainer = $buttonContainer;
 
-    const buttonEls = CONSTANTS.BUTTONS.map(
-      (button, index) =>
-        `<button type='button' data-index=${index} id='${button.id}-button'>${
-          index + 1
-        }. ${button.name}</buttopn>`
-    ).join("");
+		$buttonContainer.classList.add("btn-container");
 
-    this.$buttonContainer.innerHTML = buttonEls;
-    this.$app.appendChild($buttonContainer);
-  }
-  _createMainContainer() {
-    const $mainContainer = document.createElement("div");
-    this.$mainContainer = $mainContainer;
-    this.$mainContainer.classList.add("container");
+		const buttonEls = CONSTANTS.BUTTONS.map(
+			(button, index) =>
+				`<button type='button' data-index=${index} id='${button.id}-button'>${
+					index + 1
+				}. ${button.name}</buttopn>`
+		).join("");
 
-    const tabs = ["stations-tab", "lines-tab", "sections-tab", "map-tap"];
-    const textTabEls = tabs
-      .map((tab) => `<div class='tab' style='display:none' id='${tab}'></div>`)
-      .join("");
+		$buttonContainer.innerHTML = buttonEls;
+		return $buttonContainer;
+	}
 
-    this.$mainContainer.innerHTML = textTabEls;
-    const $tabEls = this.$mainContainer.children;
-    // 어ㅏ,..이거 너무 맘에 안드는데
-    this.$tabEls = $tabEls;
+	// 현재 봉착한 문제 -> createTabsEls 본래 의도는, tabs 4개의 유사객체를 생성 후 배열을 반환하는 것이었습니다.
+	// 하지만 반환값이 유사객체일 경우 할당되지 않는 문제가 있어 이를 해결하지 못하고 일단 container를 생성하여 반환하는 방법을 사용하고 있습니다.
 
-    this.$app.appendChild(this.$mainContainer);
-  }
-  hideAllTabs() {
-    if (this.$tabEls) {
-      for (let idx = 0; idx < this.$tabEls.length; idx++) {
-        this.$tabEls[idx].style.display = "none";
-      }
-      console.log(this.$tabEls);
-    }
-  }
-  render(callback) {
-    this._createButtons();
-    this._createMainContainer();
-    if (callback) {
-      callback(this.$mainContainer, this.$tabEls);
-    }
-  }
+	_createTabsText() {
+		const tabs = ["stations-tab", "lines-tab", "sections-tab", "map-tap"];
+		const textTabEls = tabs
+			.map((tab) => `<div class='tab' style='display:none' id='${tab}'></div>`)
+			.join("");
+		return textTabEls;
+	}
 
-  bindOnClickButton(onClickButton) {
-    this.$buttonContainer.addEventListener("click", onClickButton);
-  }
+	_createTabsEls() {
+		const $tabContainer = document.createElement("div");
+		this.$tabContainer = $tabContainer;
+		$tabContainer.classList.add("tab-container");
+		const textTabEls = this._createTabsText();
+		$tabContainer.innerHTML = textTabEls;
+		return $tabContainer;
+	}
+
+	hideAllTabs() {
+		if (this.$tabContainer) {
+			for (let idx = 0; idx < this.$tabContainer.children.length; idx++) {
+				this.$tabContainer.children[idx].style.display = "none";
+			}
+		}
+	}
+	render(callback) {
+		this._createButtons();
+		this.$app.appendChild(this.$buttonContainer);
+
+		this._createTabsEls();
+		this.$app.append(this.$tabContainer);
+
+		if (callback) {
+			callback(this.$tabContainer.children);
+		}
+	}
+
+	bindOnClickButton(onClickButton) {
+		this.$buttonContainer.addEventListener("click", onClickButton);
+	}
 }
 
 // 현재 내가 느끼는 문제점
