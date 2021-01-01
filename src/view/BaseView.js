@@ -13,7 +13,7 @@ export default class BaseView {
 
 		$buttonContainer.classList.add("btn-container");
 
-		const buttonEls = CONSTANTS.BUTTONS.map(
+		const buttonEls = CONSTANTS.MAINBUTTONS.map(
 			(button, index) =>
 				`<button type='button' data-index=${index} id='${button.id}-button'>${
 					index + 1
