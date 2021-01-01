@@ -4,6 +4,7 @@ export default class LineView {
 		this.$input = null;
 		this.$table = document.createElement("table");
 		this.$tbody = null;
+		this.$form = null;
 	}
 	//공통
 	setLinesTab($linesTab) {
@@ -100,13 +101,69 @@ export default class LineView {
 		$form.append(startSelectBox);
 		$form.append(endSelectBox);
 		$form.append(submitButton);
+		this.$form = $form;
 
 		return $form;
 	}
+	_createTHead() {
+		const $thead = document.createElement("thead");
+		const $tr = document.createElement("tr");
+		const headers = ["노선이름", "상행 종점역", "하행 종점역", "설정"];
+		const textHeaders = headers
+			.map((header) => {
+				return `<td>${header}</td>`;
+			})
+			.join("");
+		$tr.innerHTML = textHeaders;
+		$thead.appendChild($tr);
+		return $thead;
+	}
 
-	render(stations) {
+	_createTBody(lines) {
+		const $tbody = document.createElement("tbody");
+		const textTbody = lines
+			.map((line) => {
+				const { sections } = line;
+				return `<tr data-line-id='${line.id}'>
+			<td>${line.name}</td>
+			<td>${sections[0].name}</td>
+			<td>${sections[sections.length - 1].name}</td>
+			<td><button>삭제</button></td>
+			</tr>`;
+			})
+			.join("");
+		$tbody.innerHTML = textTbody;
+		this.$tbody = $tbody;
+		return $tbody;
+	}
+	_createTable(lines) {
+		const $table = document.createElement("table");
+		this.$table = $table;
+		const $thead = this._createTHead();
+		const $tbody = this._createTBody(lines);
+		this.$table.appendChild($thead);
+		this.$table.appendChild($tbody);
+		return this.$table;
+	}
+	render(stations, lines, onClickSubmit, onClickRemove) {
 		this._clearLinesTab();
 		const $form = this._createForm(stations);
 		this.$linesTab.append($form);
+		this._clearTable();
+		this._createTable(lines);
+		this.$linesTab.append(this.$table);
+		if (onClickSubmit) {
+			this.$form.addEventListener("submit", onClickSubmit);
+		}
+		if (onClickRemove) {
+			this.$tbody.addEventListener("click", onClickRemove);
+		}
+	}
+
+	removeTrByLineId(lineId) {
+		const tr = this.$tbody.querySelector(`[data-line-id='${lineId}']`);
+		if (tr) {
+			tr.remove();
+		}
 	}
 }

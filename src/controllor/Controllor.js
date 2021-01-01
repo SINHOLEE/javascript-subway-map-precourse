@@ -22,6 +22,19 @@ export default class Controllor {
 		});
 		baseView.bindOnClickButton(this.onClickButton.bind(this));
 	}
+	onLineRemove(e) {
+		if (e.target.tagName !== "BUTTON") {
+			return;
+		}
+		const lineId = e.target.parentNode.parentNode.dataset.lineId;
+		console.log(lineId);
+		const { lineView } = this.views;
+		const { lineModel } = this.models;
+		lineModel.removeLineById(lineId, () => {
+			lineView.removeTrByLineId(lineId);
+		});
+	}
+
 	onStationRemove(e) {
 		if (e.target.tagName !== "BUTTON") {
 			return;
@@ -32,9 +45,35 @@ export default class Controllor {
 		const { stationView } = this.views;
 
 		stationModel.removeStationById(selectedStationId, () => {
-			stationView.removeTrByStationId.bind(stationView)(selectedStationId);
+			stationView.removeTrByStationId(selectedStationId);
 		});
 	}
+	onLineSubmit(e) {
+		console.log("test1");
+		e.preventDefault();
+		console.log("test2");
+		const { stationModel, lineModel } = this.models;
+		function reRender() {
+			const { lineView } = this.views;
+			lineView.render(
+				stationModel.getStations(),
+				lineModel.getLines(),
+				this.onLineSubmit.bind(this),
+				this.onLineRemove.bind(this)
+			);
+			// lineView.bindOnClickSubmit(this.onLineSubmit.bind(this));
+			// lineView.bindOnClickRemove(this.onLineRemove.bind(this));
+		}
+		const { name, startStationId, endStationId } = parseFormData(e.target);
+
+		const newLine = {
+			name,
+			sections: stationModel.getStationsByIds([startStationId, endStationId]),
+			id: genUUID(),
+		};
+		lineModel.addLine(newLine, reRender.bind(this));
+	}
+
 	onStationSubmit(e) {
 		e.preventDefault();
 		function callback() {
@@ -67,8 +106,15 @@ export default class Controllor {
 	_renderLinesTab() {
 		const { lineView } = this.views;
 		const stations = this.models.stationModel.getStations();
+		const lines = this.models.lineModel.getLines();
 		lineView.showTab();
-		lineView.render(stations);
+
+		lineView.render(
+			stations,
+			lines,
+			this.onLineSubmit.bind(this),
+			this.onLineRemove.bind(this)
+		);
 	}
 	onClickButton(e) {
 		const index = e.target.dataset.index;
