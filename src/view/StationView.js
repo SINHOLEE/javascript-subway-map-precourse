@@ -115,10 +115,10 @@ export default class StationView {
 
 	// 여기서 제일 헷갈리는 파트는, bind시점에서 this.$form, this.$table이 없던 시점일지라도,
 	// 이벤트리스너가 잘 붙는다는 점이다. 왜지?
-	bindOnClickSubmit(onClickSublit) {
+	bindOnClickSubmit(onClickSubmit) {
 		// const form = document.getElementById("station-name-form");
 		// 이렇게 하면... 이벤트 리스너는 객체주소에 붙는건가?
-		this.$form.addEventListener("submit", onClickSublit);
+		this.$form.addEventListener("submit", onClickSubmit);
 	}
 	bindOnClickRemove(onClickRemove) {
 		console.log("asdasd");
