@@ -22,12 +22,17 @@ export default class Controllor {
 		});
 		baseView.bindOnClickButton(this.onClickButton.bind(this));
 	}
+	getDatasetIdFromTarget(node) {
+		if (node.dataset.id) {
+			return node.dataset.id;
+		}
+		return this.getDatasetIdFromTarget(node.parentNode);
+	}
 	onLineRemove(e) {
 		if (e.target.tagName !== "BUTTON") {
 			return;
 		}
-		const lineId = e.target.parentNode.parentNode.dataset.lineId;
-		console.log(lineId);
+		const lineId = this.getDatasetIdFromTarget(e.target);
 		const { lineView } = this.views;
 		const { lineModel } = this.models;
 		lineModel.removeLineById(lineId, () => {
@@ -40,7 +45,7 @@ export default class Controllor {
 			return;
 		}
 		// 맘에 안드는 파트 하지만 일단 당장해야하니까 넘어간다...
-		const selectedStationId = e.target.parentNode.parentNode.dataset.stationId;
+		const selectedStationId = this.getDatasetIdFromTarget(e.target);
 		const { stationModel } = this.models;
 		const { stationView } = this.views;
 
@@ -49,9 +54,7 @@ export default class Controllor {
 		});
 	}
 	onLineSubmit(e) {
-		console.log("test1");
 		e.preventDefault();
-		console.log("test2");
 		const { stationModel, lineModel } = this.models;
 		function reRender() {
 			const { lineView } = this.views;
@@ -76,10 +79,11 @@ export default class Controllor {
 
 	onStationSubmit(e) {
 		e.preventDefault();
-		function callback() {
-			stationView.showTable(stationModel.getStations());
-			stationView.clearInputValue();
-			stationView.bindOnClickRemove(this.onStationRemove.bind(this));
+		function reRender() {
+			stationView.render(
+				stationModel.getStations(),
+				this.onStationRemove.bind(this)
+			);
 		}
 
 		const { name } = parseFormData(e.target);
@@ -89,7 +93,7 @@ export default class Controllor {
 			name,
 			id: genUUID(),
 		};
-		stationModel.addStation(newStation, callback.bind(this));
+		stationModel.addStation(newStation, reRender.bind(this));
 	}
 
 	_renderStationsTab() {
@@ -97,10 +101,9 @@ export default class Controllor {
 		const stations = this.models.stationModel.getStations();
 
 		stationView.showStationsTab();
-		stationView.render(stations);
+		stationView.render(stations, this.onStationRemove.bind(this));
 		// 이 바인드가 비동기 적인가?
 		stationView.bindOnClickSubmit(this.onStationSubmit.bind(this));
-		stationView.bindOnClickRemove(this.onStationRemove.bind(this));
 	}
 
 	_renderLinesTab() {

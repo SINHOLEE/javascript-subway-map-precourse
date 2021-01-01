@@ -1,11 +1,12 @@
+import Table from "../components/Table.js";
+
 export default class StationView {
 	constructor() {
 		// lazy load??
 		this.$stationsTab = null;
 		this.$form = null;
-		this.$input = null;
 		this.$table = null;
-		this.$tbody = null;
+		this.$input = null;
 	}
 	setStationsTab($stationsTab) {
 		this.$stationsTab = $stationsTab;
@@ -67,45 +68,31 @@ export default class StationView {
 	_createTable() {
 		this.$table = document.createElement("table");
 	}
-	_createTHead() {
-		let tableHTML = "";
-		const header = "<thead><tr><th>역 이름</th><th>설정</th></tr></thead>";
-		tableHTML += header;
-		this.$table.innerHTML = tableHTML;
-	}
-	_createTBody(stations) {
-		const tbody = document.createElement("tbody");
-		tbody.innerHTML = stations
-			.map(
-				(station) =>
-					`<tr data-station-id='${station.id}'><td>${station.name}</td><td><button>삭제</button></td></tr>`
-			)
-			.join("");
-
-		this.$tbody = tbody;
-		this.$table.append(this.$tbody);
-	}
-	showTable(stations) {
-		this._clearTable();
-		this._createTable();
-		this._createTHead();
-		this._createTBody(stations);
-		this.$stationsTab.append(this.$table);
+	trTemplate(station) {
+		return `
+		<tr data-id='${station.id}'>
+			<td>${station.name}</td>
+			<td><button>삭제</button></td>
+		</tr>
+		`;
 	}
 	showStationsTab() {
 		this.$stationsTab.style.display = "block";
 	}
-	render(stations) {
+	render(stations, onClickRemove) {
 		this._clearStationsTab();
 		this._createForm();
 		this._createTitle();
-		this.showTable(stations);
+		this.$table = new Table(this.$stationsTab);
+		this.$table.createHeaders(["역 이름", "설정"]);
+		this.$table.render(stations, this.trTemplate, onClickRemove);
 	}
 	// 사실 컨트롤러 단에서, tr객체를  넘겨줄 수도 있었다.
 	// 그렇게 하지 않은 이유는 컨트롤러는 데이터만 다루어야 하기 때문이라고 생각해서 이다.
 	// 하지만 그냥 tr객체를 보내서 지워도 된다면? 어떻게 해야할까.
 	removeTrByStationId(stationId) {
-		const tr = this.$tbody.querySelector(`[data-station-id='${stationId}']`);
+		console.log(stationId);
+		const tr = this.$table.findTrById(stationId);
 		if (tr) {
 			tr.remove();
 			// 왜 remove는 자기자신이 사라지는건가? yes -> 객체지향적인 동작.
@@ -119,9 +106,5 @@ export default class StationView {
 		// const form = document.getElementById("station-name-form");
 		// 이렇게 하면... 이벤트 리스너는 객체주소에 붙는건가?
 		this.$form.addEventListener("submit", onClickSubmit);
-	}
-	bindOnClickRemove(onClickRemove) {
-		console.log("asdasd");
-		this.$table.addEventListener("click", onClickRemove);
 	}
 }
