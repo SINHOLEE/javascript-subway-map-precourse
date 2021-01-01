@@ -326,3 +326,6 @@ view에서 쓰이는 createSomeElement 메서드는 공통부분을 추려내면
 
 2021-01-01
 buttons, input, label, select, table 컴포넌트화 하여 관리하도록 수정
+현재 table 컴포넌트 생성 완료,
+button추상화,
+section model 추가하여 유연한 model 구조 확립
