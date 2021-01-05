@@ -1,4 +1,4 @@
-import { genUUID, parseFormData } from "../../utils.js";
+import {genUUID, isEmptyString, isOverTwoString, isString, parseFormData} from "../../utils.js";
 
 export default class Controllor {
 	constructor(models, views) {
@@ -9,11 +9,43 @@ export default class Controllor {
 		// this.$mainContainer = null; // 와.... init 밑에있다고 개꼬이네...
 		// 소름
 	}
+	isInsertLineValid(lineName) {
+		if (isEmptyString(lineName)) {
+			alert("노선 이름을 입력해 주세요");
+			return false;
+		}
+		const {lineModel} = this.models;
+		if (lineModel.isExistInLines(lineName)) {
+			alert("중복되는 이름이 존재합니다.");
+			return false;
+		}
+		return true;
+	}
+	isRemoveStationValid(stationId) {
+		const {lineModel} = this.models;
+
+		return !lineModel.isExistInSections(stationId);
+	}
+	isInsertStationValid(stationName) {
+		if (!isString(stationName)) {
+			alert("문자열을 입력해주세요");
+			return false;
+		}
+		if (!isOverTwoString(stationName)) {
+			alert("두글자 이상 입력해 주세요");
+			return false;
+		}
+		if (this.models.stationModel.isExistInStation(stationName)) {
+			alert("이미 저장된 이름이 있습니다. ");
+			return false;
+		}
+		return true;
+	}
 	setMainContainer($mainContainer) {
 		this.$mainContainer = $mainContainer;
 	}
 	init() {
-		const { baseView, stationView, lineView } = this.views;
+		const {baseView, stationView, lineView} = this.views;
 		baseView.render(($tabEls) => {
 			// this.setMainContainer.bind(this)($mainContainer);
 
@@ -33,8 +65,8 @@ export default class Controllor {
 			return;
 		}
 		const lineId = this.getDatasetIdFromTarget(e.target);
-		const { lineView } = this.views;
-		const { lineModel } = this.models;
+		const {lineView} = this.views;
+		const {lineModel} = this.models;
 		lineModel.removeLineById(lineId, () => {
 			lineView.removeTrByLineId(lineId);
 		});
@@ -46,8 +78,12 @@ export default class Controllor {
 		}
 		// 맘에 안드는 파트 하지만 일단 당장해야하니까 넘어간다...
 		const selectedStationId = this.getDatasetIdFromTarget(e.target);
-		const { stationModel } = this.models;
-		const { stationView } = this.views;
+		if (!this.isRemoveStationValid(selectedStationId)) {
+			alert("노선에 저장된 역이 있습니다.");
+			return;
+		}
+		const {stationModel} = this.models;
+		const {stationView} = this.views;
 
 		stationModel.removeStationById(selectedStationId, () => {
 			stationView.removeTrByStationId(selectedStationId);
@@ -55,20 +91,22 @@ export default class Controllor {
 	}
 	onLineSubmit(e) {
 		e.preventDefault();
-		const { stationModel, lineModel } = this.models;
+		const {stationModel, lineModel} = this.models;
 		function reRender() {
-			const { lineView } = this.views;
+			const {lineView} = this.views;
 			lineView.render(
 				stationModel.getStations(),
 				lineModel.getLines(),
 				this.onLineSubmit.bind(this),
-				this.onLineRemove.bind(this)
+				this.onLineRemove.bind(this),
 			);
 			// lineView.bindOnClickSubmit(this.onLineSubmit.bind(this));
 			// lineView.bindOnClickRemove(this.onLineRemove.bind(this));
 		}
-		const { name, startStationId, endStationId } = parseFormData(e.target);
-
+		const {name, startStationId, endStationId} = parseFormData(e.target);
+		if (!this.isInsertLineValid(name)) {
+			return;
+		}
 		const newLine = {
 			name,
 			sections: stationModel.getStationsByIds([startStationId, endStationId]),
@@ -80,15 +118,16 @@ export default class Controllor {
 	onStationSubmit(e) {
 		e.preventDefault();
 		function reRender() {
-			stationView.render(
-				stationModel.getStations(),
-				this.onStationRemove.bind(this)
-			);
+			stationView.render(stationModel.getStations(), this.onStationRemove.bind(this));
+			stationView.bindOnClickSubmit(this.onStationSubmit.bind(this));
 		}
 
-		const { name } = parseFormData(e.target);
-		const { stationModel } = this.models;
-		const { stationView } = this.views;
+		const {name} = parseFormData(e.target);
+		if (!this.isInsertStationValid(name)) {
+			return;
+		}
+		const {stationModel} = this.models;
+		const {stationView} = this.views;
 		const newStation = {
 			name,
 			id: genUUID(),
@@ -97,7 +136,7 @@ export default class Controllor {
 	}
 
 	_renderStationsTab() {
-		const { stationView } = this.views;
+		const {stationView} = this.views;
 		const stations = this.models.stationModel.getStations();
 
 		stationView.showStationsTab();
@@ -107,17 +146,12 @@ export default class Controllor {
 	}
 
 	_renderLinesTab() {
-		const { lineView } = this.views;
+		const {lineView} = this.views;
 		const stations = this.models.stationModel.getStations();
 		const lines = this.models.lineModel.getLines();
 		lineView.showTab();
 
-		lineView.render(
-			stations,
-			lines,
-			this.onLineSubmit.bind(this),
-			this.onLineRemove.bind(this)
-		);
+		lineView.render(stations, lines, this.onLineSubmit.bind(this), this.onLineRemove.bind(this));
 	}
 	onClickButton(e) {
 		const index = e.target.dataset.index;
@@ -125,7 +159,7 @@ export default class Controllor {
 		if (tagName != "button") {
 			return;
 		}
-		const { baseView } = this.views;
+		const {baseView} = this.views;
 		baseView.hideAllTabs();
 		if (index === "0") {
 			this._renderStationsTab();

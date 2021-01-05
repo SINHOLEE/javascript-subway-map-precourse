@@ -52,9 +52,18 @@ export function parseFormData(form) {
 	// console.log("inputs ", typeof inputs);
 	// console.log("targets ", targets);
 	// console.log("inputs ", inputs);
-	const res = targets.reduce(
-		(acc, target) => ({ ...acc, [target.name]: target.value }),
-		{}
-	);
+	const res = targets.reduce((acc, target) => ({...acc, [target.name]: target.value}), {});
 	return res;
+}
+
+export function isOverTwoString(string) {
+	return string.length >= 2;
+}
+
+export function isString(value) {
+	return typeof value === "string" || value instanceof String;
+}
+
+export function isEmptyString(value) {
+	return value === "";
 }
